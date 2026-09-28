@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="डिजिटल कार्ड" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="description" content="जनप्रतिनिधि का डिजिटल संपर्क कार्ड" />
+  <title>डिजिटल संपर्क कार्ड</title>
+
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #111827;
+      --accent-soft: #f3f4f6;
+      --success: #16a34a;
+      --radius: 22px;
+      --shadow: 0 14px 40px rgba(17, 24, 39, .10);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, #e5e7eb 0, #f3f4f6 34%, #eef0f3 100%);
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit
+    }
+
+    button {
+      font: inherit
+    }
+
+    .page {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 14px 14px 110px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(229, 231, 235, .9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .hero {
+      position: relative;
+      padding: 26px 20px 24px;
+      text-align: center;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    }
+
+    .top-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #111827;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      margin-bottom: 15px;
+    }
+
+    .avatar {
+      width: 116px;
+      height: 116px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 15px;
+      border: 5px solid #fff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+      background: #e5e7eb;
+    }
+
+    .name {
+      margin: 0;
+      font-size: clamp(26px, 7vw, 34px);
+      line-height: 1.08;
+      letter-spacing: -.8px;
+      font-weight: 800;
+    }
+
+    .role {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.2;
+      min-width: 0;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 16px;
+      padding: 12px;
+      transition: .2s ease;
+    }
+
+    .contact-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .06)
+    }
+
+    .icon,
+    .install-icon {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      flex: 0 0 42px;
+      line-height: 0;
+      font-size: 0;
+    }
+
+    .icon svg,
+    .install-icon svg,
+    .primary-btn svg,
+    .share-btn svg,
+    .bottom-bar svg,
+    .close-lightbox svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+      flex: 0 0 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .install-icon {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      flex-basis: 48px;
+      background: #111827;
+      color: #fff;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(17, 24, 39, .16);
+    }
+
+    .install-icon svg {
+      width: 24px;
+      height: 24px;
+      flex-basis: 24px;
+    }
+
+    .contact-text {
+      min-width: 0
+    }
+
+    .contact-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .contact-value {
+      font-size: 13px;
+      font-weight: 700;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .section {
+      padding: 20px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -.3px;
+    }
+
+    .section-sub {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .problem-box {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #fff, #fafafa);
+    }
+
+    .problem-box h3 {
+      margin: 0 0 7px;
+      font-size: 18px;
+    }
+
+    .problem-box p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .primary-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.2;
+      width: 100%;
+      border: 0;
+      border-radius: 15px;
+      padding: 14px 16px;
+      margin-top: 13px;
+      background: #111827;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .primary-btn:active {
+      transform: scale(.99)
+    }
+
+    .info-box {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin-top: 10px;
+      background: #fff;
+    }
+
+    .info-box strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px
+    }
+
+    .info-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .gallery img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 16px;
+      display: block;
+      cursor: pointer;
+      background: #e5e7eb;
+    }
+
+    .share-wrap {
+      padding: 16px 20px 20px
+    }
+
+    .share-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.2;
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 15px;
+      padding: 14px 16px;
+      cursor: pointer;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 0 8px 20px;
+    }
+
+    .bottom-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      width: min(calc(100% - 20px), 720px);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 8px;
+      background: rgba(17, 24, 39, .94);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .24);
+      z-index: 20;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    }
+
+    .bottom-bar a {
+      color: #fff;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 4px;
+      border-radius: 12px;
+    }
+
+    .bottom-bar a span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 22px;
+      margin: 0 0 4px;
+      line-height: 0
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 85px;
+      transform: translate(-50%, 20px);
+      background: #111827;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+      z-index: 40;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0)
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .86);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+    }
+
+    .lightbox.show {
+      display: flex
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 82vh;
+      border-radius: 16px;
+      object-fit: contain;
+    }
+
+    .close-lightbox {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    @media (min-width:640px) {
+      .page {
+        padding-top: 28px
+      }
+
+      .contact-grid {
+        grid-template-columns: repeat(4, 1fr)
+      }
+
+      .gallery {
+        grid-template-columns: repeat(4, 1fr)
+      }
+    }
+
+    .install-card {
+      padding: 0;
+      overflow: hidden
+    }
+
+    .install-inner {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 13px;
+      align-items: center;
+      padding: 18px
+    }
+
+    .install-copy h2 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -.2px
+    }
+
+    .install-copy p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.55
+    }
+
+    .install-btn {
+      grid-column: 1/-1;
+      width: 100%;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 15px;
+      background: #111827;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer
+    }
+
+    .install-btn.installed {
+      background: #e5e7eb;
+      color: #111827;
+      cursor: default
+    }
+
+    .ios-note {
+      display: none;
+      margin: 0 18px 18px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      background: #f9fafb;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted)
+    }
+
+    @media (min-width:640px) {
+      .install-inner {
+        grid-template-columns: auto 1fr auto
+      }
+
+      .install-btn {
+        grid-column: auto;
+        width: auto;
+        min-width: 150px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+
+    <!-- HERO -->
+    <section class="card hero">
+      <div class="top-badge">जनप्रतिनिधि</div>
+
+      <!-- Replace photo URL here -->
+      <img id="प्रोफ़ाइलPhoto" class="avatar"
+        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=85"
+        alt="प्रोफ़ाइल फोटो" />
+
+      <h1 id="personName" class="name">अरविन्द कुमार (मोनू सोनी)</h1>
+      <p id="personRole" class="role">वार्ड पार्षद</p>
+    </section>
+
+
+    <!-- PWA INSTALL -->
+    <section class="card install-card" id="installAppCard">
+      <div class="install-inner">
+        <div class="install-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3v11" />
+            <path d="m8 10 4 4 4-4" />
+            <path d="M5 19h14" />
+            <path d="M4 7h4M16 7h4" />
+          </svg>
+        </div>
+        <div class="install-copy">
+          <h2>ऐप डाउनलोड करें</h2>
+          <p>इस डिजिटल कार्ड को अपने मोबाइल में ऐप की तरह रखें। तेज़ एक्सेस और सुविधाजनक उपयोग के लिए इंस्टॉल करें।</p>
+        </div>
+        <button class="install-btn" id="installBtn" type="button">ऐप इंस्टॉल करें</button>
+      </div>
+      <div class="ios-note" id="iosNote">
+        iPhone/iPad पर: <strong>Share</strong> बटन दबाएँ और <strong>“होम स्क्रीन पर जोड़ें”</strong> चुनें।
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="card">
+      <div class="contact-grid">
+
+        <a class="contact-item" id="callLink" href="tel:+919999999999">
+          <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L8 9.91a16 16 0 0 0 6 6l1.47-1.28a2 2 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92z" />
+            </svg></div>
+          <div class="contact-text">
+            <div class="contact-label">कॉल करें</div>
+            <div class="contact-value" id="phoneText">+91 99999 99999</div>
+          </div>
+        </a>
+
+        <a class="contact-item" id="emailLink" href="mailto:example@example.com">
+          <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="m3 7 9 6 9-6" />
+            </svg></div>
+          <div class="contact-text">
+            <div class="contact-label">ईमेल</div>
+            <div class="contact-value" id="emailText">example@example.com</div>
+          </div>
+        </a>
+
+        <a class="contact-item" id="whatsappLink" href="https://wa.me/919999999999" target="_blank" rel="noopener">
+          <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.7A8.5 8.5 0 1 1 20.5 11.5Z" />
+              <path
+                d="M8.3 8.3c.2-.5.5-.7.9-.7h.5c.2 0 .4.1.5.4l.7 1.6c.1.3.1.5-.1.7l-.6.7c-.1.2-.1.3 0 .5.5.9 1.2 1.6 2.1 2.1.2.1.4.1.5 0l.7-.6c.2-.2.4-.2.7-.1l1.6.7c.3.1.4.3.4.5v.5c0 .4-.2.7-.7.9-.7.3-1.5.1-2.1-.2-1-.5-2-1.2-2.8-2-.8-.8-1.5-1.8-2-2.8-.3-.6-.5-1.4-.2-2.1Z" />
+            </svg></div>
+          <div class="contact-text">
+            <div class="contact-label">व्हाट्सऐप</div>
+            <div class="contact-value">अभी चैट करें</div>
+          </div>
+        </a>
+
+        <a class="contact-item" id="addressLink" href="https://maps.google.com/?q=Your%20पता" target="_blank"
+          rel="noopener">
+          <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </svg></div>
+          <div class="contact-text">
+            <div class="contact-label">पता</div>
+            <div class="contact-value" id="addressText">Your पता</div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ISSUE / GROUP -->
+    <section class="card section">
+      <div class="problem-box">
+        <h3>कोई जनसमस्या है?</h3>
+        <p>
+          Share your issue or join the dedicated व्हाट्सऐप group for updates, requests and public communication.
+        </p>
+        <a id="issueGroupLink" class="primary-btn" href="https://chat.whatsapp.com/YOUR_GROUP_LINK" target="_blank"
+          rel="noopener">
+          💬 Join व्हाट्सऐप Group
+        </a>
+      </div>
+    </section>
+
+    <!-- MISSION / VISION -->
+    <section class="card section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">मिशन &amp; विज़न</h2>
+          <p class="section-sub">जनसेवा से जुड़ी जानकारी एवं प्राथमिकताएँ।</p>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>मिशन</strong>
+        <p id="missionText">
+          पारदर्शी जनसंचार, समस्याओं का त्वरित समाधान और स्थानीय सेवाओं तक आसान पहुँच।
+        </p>
+      </div>
+
+      <div class="info-box">
+        <strong>विज़न</strong>
+        <p id="visionText">
+          स्पष्ट संवाद, जनभागीदारी और जवाबदेह सेवाओं के साथ एक सशक्त एवं जुड़ा हुआ स्थानीय समुदाय।
+        </p>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="card section" id="gallerySection">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">गैलरी</h2>
+          <p class="section-sub">फोटो एवं जनसेवा गतिविधियों की झलक।</p>
+        </div>
+      </div>
+
+      <div class="gallery">
+        <img class="gallery-img"
+          src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=85"
+          alt="गैलरी 1">
+        <img class="gallery-img"
+          src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=700&q=85"
+          alt="गैलरी 2">
+        <img class="gallery-img"
+          src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=700&q=85"
+          alt="गैलरी 3">
+        <img class="gallery-img"
+          src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=85"
+          alt="गैलरी 4">
+      </div>
+    </section>
+
+    <!-- SHARE -->
+    <section class="card share-wrap">
+      <button class="share-btn" id="shareBtn">🔗 डिजिटल कार्ड साझा करें</button>
+    </section>
+
+    <div class="footer">
+      डिजिटल संपर्क कार्ड •
+      <a href="https://novacrafttech.online/" target="_blank" rel="noopener noreferrer"
+        style="font-weight:800;text-decoration:none;">Developed by Novacraft Technology</a>
+    </div>
+  </main>
+
+  <!-- MOBILE ACTION BAR -->
+  <nav class="bottom-bar" aria-label="त्वरित विकल्प">
+    <a id="bottomकॉल करें" href="tel:+919999999999"><span><svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L8 9.91a16 16 0 0 0 6 6l1.47-1.28a2 2 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92z" />
+        </svg></span>कॉल करें</a>
+    <a id="bottomव्हाट्सऐप" href="https://wa.me/919999999999" target="_blank" rel="noopener"><span><svg
+          viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.7A8.5 8.5 0 1 1 20.5 11.5Z" />
+          <path
+            d="M8.3 8.3c.2-.5.5-.7.9-.7h.5c.2 0 .4.1.5.4l.7 1.6c.1.3.1.5-.1.7l-.6.7c-.1.2-.1.3 0 .5.5.9 1.2 1.6 2.1 2.1.2.1.4.1.5 0l.7-.6c.2-.2.4-.2.7-.1l1.6.7c.3.1.4.3.4.5v.5c0 .4-.2.7-.7.9-.7.3-1.5.1-2.1-.2-1-.5-2-1.2-2.8-2-.8-.8-1.5-1.8-2-2.8-.3-.6-.5-1.4-.2-2.1Z" />
+        </svg></span>व्हाट्सऐप</a>
+    <a href="#gallerySection"><span><svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2" />
+          <circle cx="8.5" cy="9" r="1.5" />
+          <path d="m21 15-5-5-7 7-2-2-4 4" />
+        </svg></span>गैलरी</a>
+    <a href="#" id="bottomShare"><span><svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="18" cy="5" r="2.5" />
+          <circle cx="6" cy="12" r="2.5" />
+          <circle cx="18" cy="19" r="2.5" />
+          <path d="m8.2 10.8 7.6-4.6M8.2 13.2l7.6 4.6" />
+        </svg></span>साझा करें</a>
+  </nav>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <button class="close-lightbox" id="closeLightbox" aria-label="बंद करें"><svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </svg></button>
+    <img id="lightboxImage" src="" alt="पूर्वावलोकन">
+  </div>
+
+  <div class="toast" id="toast">लिंक कॉपी हो गया</div>
+
+  <script>
+    /* ==============================
+       CONFIG — EDIT THESE DETAILS
+       ============================== */
+
+    const CONFIG = {
+      name: "अरविन्द कुमार (मोनू सोनी)",
+      role: "वार्ड पार्षद",
+
+      photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=85",
+
+      phone: "+919999999999",
+      email: "example@example.com",
+      whatsapp: "919999999999",
+      address: "Your पता, City, State",
+
+      addressMap: "https://maps.google.com/?q=Your%20पता",
+
+      issueGroup: "https://chat.whatsapp.com/YOUR_GROUP_LINK",
+
+      mission: "पारदर्शी जनसंचार, समस्याओं का त्वरित समाधान और स्थानीय सेवाओं तक आसान पहुँच।",
+      vision: "स्पष्ट संवाद, जनभागीदारी और जवाबदेह सेवाओं के साथ एक सशक्त एवं जुड़ा हुआ स्थानीय समुदाय।"
+    };
+
+    /* ==============================
+       APPLY CONFIG
+       ============================== */
+
+    document.title = `${CONFIG.name} | डिजिटल संपर्क कार्ड`;
+
+    document.getElementById("personName").textContent = CONFIG.name;
+    document.getElementById("personRole").textContent = CONFIG.role;
+    document.getElementById("प्रोफ़ाइलPhoto").src = CONFIG.photo;
+
+    document.getElementById("phoneText").textContent = CONFIG.phone;
+    document.getElementById("emailText").textContent = CONFIG.email;
+    document.getElementById("addressText").textContent = CONFIG.address;
+
+    document.getElementById("callLink").href = `tel:${CONFIG.phone}`;
+    document.getElementById("bottomकॉल करें").href = `tel:${CONFIG.phone}`;
+
+    document.getElementById("emailLink").href = `mailto:${CONFIG.email}`;
+
+    document.getElementById("whatsappLink").href = `https://wa.me/${CONFIG.whatsapp}`;
+    document.getElementById("bottomव्हाट्सऐप").href = `https://wa.me/${CONFIG.whatsapp}`;
+
+    document.getElementById("addressLink").href = CONFIG.addressMap;
+    document.getElementById("issueGroupLink").href = CONFIG.issueGroup;
+
+    document.getElementById("missionText").textContent = CONFIG.mission;
+    document.getElementById("visionText").textContent = CONFIG.vision;
+
+    /* ==============================
+       SHARE
+       ============================== */
+
+    const shareData = {
+      title: `${CONFIG.name} | डिजिटल संपर्क कार्ड`,
+      text: `का डिजिटल संपर्क कार्ड ${CONFIG.name}`,
+      url: window.location.href
+    };
+
+    async function shareCard() {
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+        } else {
+          await navigator.clipboard.writeText(window.location.href);
+          showToast("कार्ड का लिंक कॉपी हो गया");
+        }
+      } catch (err) {
+        // User cancelled share; no action needed.
+      }
+    }
+
+    document.getElementById("shareBtn").addEventListener("click", shareCard);
+    document.getElementById("bottomShare").addEventListener("click", (e) => {
+      e.preventDefault();
+      shareCard();
+    });
+
+    /* ==============================
+       GALLERY LIGHTBOX
+       ============================== */
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightboxImage");
+
+    document.querySelectorAll(".gallery-img").forEach(img => {
+      img.addEventListener("click", () => {
+        lightboxImage.src = img.src;
+        lightboxImage.alt = img.alt;
+        lightbox.classList.add("show");
+      });
+    });
+
+    function closeLightbox() {
+      lightbox.classList.remove("show");
+      lightboxImage.src = "";
+    }
+
+    document.getElementById("closeLightbox").addEventListener("click", closeLightbox);
+
+    lightbox.addEventListener("click", e => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") closeLightbox();
+    });
+
+    /* ==============================
+       TOAST
+       ============================== */
+
+    let toastTimer;
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    /* ==============================
+       PWA INSTALL / APP MODE
+       ============================== */
+
+    let deferredInstallPrompt = null;
+    const installBtn = document.getElementById("installBtn");
+    const iosNote = document.getElementById("iosNote");
+
+    function isStandalone() {
+      return window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+    }
+
+    function isIOS() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+
+    function isSafari() {
+      return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    }
+
+    if (isStandalone()) {
+      installBtn.textContent = "ऐप पहले से इंस्टॉल है";
+      installBtn.classList.add("installed");
+      installBtn.disabled = true;
+    } else if (isIOS() && isSafari()) {
+      iosNote.style.display = "block";
+      installBtn.textContent = "ऐप इंस्टॉल करने का तरीका";
+      installBtn.addEventListener("click", () => {
+        iosNote.style.display = "block";
+        iosNote.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    } else {
+      installBtn.addEventListener("click", async () => {
+        if (!deferredInstallPrompt) {
+          showToast("ब्राउज़र के मेनू से 'ऐप इंस्टॉल करें' चुनें");
+          return;
+        }
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        if (choice.outcome === "accepted") {
+          installBtn.textContent = "ऐप इंस्टॉल हो रहा है…";
+          installBtn.classList.add("installed");
+          installBtn.disabled = true;
+        }
+      });
+
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        installBtn.textContent = "ऐप इंस्टॉल करें";
+      });
+    }
+
+    window.addEventListener("appinstalled", () => {
+      deferredInstallPrompt = null;
+      installBtn.textContent = "ऐप पहले से इंस्टॉल है";
+      installBtn.classList.add("installed");
+      installBtn.disabled = true;
+      showToast("ऐप सफलतापूर्वक इंस्टॉल हो गया");
+    });
+
+    /* Register service worker for offline/app-shell support. */
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {
+          // Keep the card fully usable even if service worker registration fails.
+        });
+      });
+    }
+
+  </script>
+</body>
+
+</html>
